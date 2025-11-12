@@ -29,8 +29,8 @@ final class MemoViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.cardButtonsArray.count, 12, "El ViewModel debe tener 12 cartas al inicializarse.")
     }
     
-    func test_initialCounter_shouldBe180() {
-        XCTAssertEqual(viewModel.counter, 180, "El contador inicial debe ser 180.")
+    func test_initialCounter_shouldBe60() {
+        XCTAssertEqual(viewModel.counter, 60, "El contador inicial debe ser 60.")
     }
     
     // MARK: - Imagenes y mezcla
@@ -96,7 +96,7 @@ final class MemoViewModelTests: XCTestCase {
         viewModel.revealCard(at: 0)
         viewModel.isInteractionDisabled = true
         viewModel.startAgain()
-        XCTAssertEqual(viewModel.counter, 180)
+        XCTAssertEqual(viewModel.counter, 60)
         XCTAssertFalse(viewModel.isInteractionDisabled)
         XCTAssertEqual(viewModel.revealedIndices.count, 0)
         XCTAssertEqual(viewModel.cardButtonsArray.count, 12)

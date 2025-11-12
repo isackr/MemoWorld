@@ -17,8 +17,8 @@ struct MemoPlay: View {
     @State var indexButtonSelectedOne: Int = 100
     @State var indexButtonSelectedTwo: Int = 100
     let columns = Array(repeating: GridItem(.flexible(), spacing: 16), count: 3)
-    @State private var showAlert = false
-    
+    @State private var showAlertWin = false
+
     var body: some View {
         VStack {
             ZStack {
@@ -33,7 +33,11 @@ struct MemoPlay: View {
                                 .onTapGesture {
                                     withAnimation(.easeInOut(duration: 0.5)) {
                                         loginViewModel.revealCard(at: index)
-                                        showAlert = loginViewModel.validateWinner()
+                                        showAlertWin = loginViewModel.validateWinner()
+                                        if showAlertWin {
+                                            SoundManager.shared.stopAll()
+                                            loginViewModel.stopCoutdown()
+                                        }
                                     }
                                 }
                         }
@@ -71,19 +75,22 @@ struct MemoPlay: View {
             .padding(.bottom, 40)
         }
         .onAppear {
-            loginViewModel.startCountdown(timeSeconds: 180)
+            loginViewModel.startCountdown(timeSeconds: 60)
+        }.onDisappear {
+            loginViewModel.stopCoutdown()
+            SoundManager.shared.stopAll()
         }
         
-        if showAlert {
-            CustomAlertView(isPresented: $showAlert,
+        if showAlertWin {
+            CustomAlertView(isPresented: $showAlertWin,
                             title: "Congratulations! \n You Are a Winner!",
                             message: "Enjoy your new points.",
                             icon: Image(systemName: "sparkles"),
                             style: .warning,
                             primaryAction: {
-                print("Primary tapped")
                 loginViewModel.startAgain()
-                loginViewModel.startCountdown(timeSeconds: 180)
+                loginViewModel.startCountdown(timeSeconds: 60)
+                loginViewModel.playSoundBackground()
             },
                             primaryLabel: { Text("Continue") },
                             secondaryAction: {
@@ -91,7 +98,29 @@ struct MemoPlay: View {
                 showWelcomeMessage = true
                 showSoundButton = false
             },
-                            secondaryLabel: { Text("Cancel") })
+                            secondaryLabel: { Text("Cancel")
+            })
+        }
+        
+        if loginViewModel.showAlertLose {
+            CustomAlertView(isPresented: $loginViewModel.showAlertLose,
+                            title: "I'm sorry! \n You have lost!",
+                            message: "Try again.",
+                            icon: Image(systemName: "sparkles"),
+                            style: .warning,
+                            primaryAction: {
+                loginViewModel.startAgain()
+                loginViewModel.startCountdown(timeSeconds: 60)
+                loginViewModel.playSoundBackground()
+            },
+                            primaryLabel: { Text("Continue") },
+                            secondaryAction: {
+                loginViewModel.startAgain()
+                showWelcomeMessage = true
+                showSoundButton = false
+            },
+                            secondaryLabel: { Text("Cancel")
+            })
         }
     }
 }

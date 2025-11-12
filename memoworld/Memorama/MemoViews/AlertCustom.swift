@@ -86,20 +86,9 @@ public struct CustomAlertView<PrimaryButtonLabel: View, SecondaryButtonLabel: Vi
         if isPresented {
             GeometryReader { proxy in
                 ZStack {
-                    // Dim + optional blur
-                    Group {
-                        Color.black.opacity(0.4)
-                            .ignoresSafeArea()
-                        if blurBackground {
-                            VisualEffectBlur(blurStyle: .systemMaterial)
-                                .ignoresSafeArea()
-                        }
-                    }
-                    .onTapGesture {
-                        if allowTapToDismiss {
-                            withAnimation { isPresented = false }
-                        }
-                    }
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .allowsHitTesting(!allowTapToDismiss)
                     // Alert Card
                     VStack(spacing: 16) {
                         if let icon = icon {
@@ -217,10 +206,3 @@ struct CustomAlertView_Previews: PreviewProvider {
         PreviewWrapper()
     }
 }
-
-// MARK: - Tips
-// - Use `CustomAlertView` by toggling the `isPresented` binding.
-// - Provide custom labels for buttons using any View, e.g., Text with images.
-// - Adjust style by changing `AlertStyle` to tint the primary button and icon.
-// - The component is intentionally minimal and easy to extend (add text fields,
-// custom content, or automatic dismiss timers if needed).

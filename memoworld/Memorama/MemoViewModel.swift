@@ -12,19 +12,23 @@ import SwiftData
 protocol MemoViewModelProtocol: ObservableObject {
     var counter: Int { get set }
     var isInteractionDisabled: Bool { get set }
+    var showAlertLose: Bool { get set }
     var cardButtonsArray: [CardCircle] { get set }
     func startSoundWaiting()
     func startCountdown(timeSeconds: Int)
-    func waitCountDown()
+    func stopCoutdown()
     func revealCard(at index: Int)
     func validateWinner() -> Bool
+    func playSoundBackground()
+    func startAgain()
 }
 
 @MainActor
 final class MemoViewModel: MemoViewModelProtocol {
-    @Published var counter: Int = 180
+    @Published var counter: Int = 60
     @Published var cardButtonsArray: [CardCircle] = []
     @Published var isInteractionDisabled = false
+    @Published var showAlertLose = false
     var imagesByMatchArray: [String] = []
     var allImages: [String] = ["cohete1","cohete2","cohete3","cohete4","cohete5","cohete6","cohete7","cohete8"]
     var revealedIndices: [Int] = []
@@ -54,19 +58,12 @@ final class MemoViewModel: MemoViewModelProtocol {
             }
     }
     
-    private func stopCoutdown() {
+    func stopCoutdown() {
         guard let timerCancellable = timerCancellable else { return }
         timerCancellable.cancel()
         SoundManager.shared.stopAll()
+        showAlertLose = true
         print("🎯 Acción al finalizar el conteo2")
-    }
-    
-    func waitCountDown() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            withAnimation(.easeInOut(duration: 1)) {
-                print("perfecto si espero los 5 sec")
-            }
-        }
     }
     
     private func shuffleImages(count: Int) -> [String] {
@@ -150,12 +147,18 @@ final class MemoViewModel: MemoViewModelProtocol {
     }
     
     func startAgain() {
-        counter = 180
+        counter = 60
         cardButtonsArray = []
         getButtonsToMatch()
         isInteractionDisabled = false
         imagesByMatchArray = []
         revealedIndices = []
         timerCancellable = nil
+    }
+    
+    func playSoundBackground() {
+        SoundManager.shared.playSound(named: "esperandoBackgroundMedio",
+                                      withExtension: "wav",
+                                      loops: true)
     }
 }
