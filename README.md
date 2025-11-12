@@ -27,4 +27,4 @@ Primer memorama con login guardado en base de datos swiftData.
 7.1- Continuar: se reinicita el juego
 7.2- Cancelar: se regresa a la vista de instrucciones.
 
-<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 Pro - 2025-11-11 at 18 36 55" src="https://github.com/user-attachments/assets/48529ab2-4a48-4e80-9cc6-d9e19f2e46df" />
+<img width="120" height="260" alt="Simulator Screenshot - iPhone 17 Pro - 2025-11-11 at 18 36 55" src="https://github.com/user-attachments/assets/48529ab2-4a48-4e80-9cc6-d9e19f2e46df" />
