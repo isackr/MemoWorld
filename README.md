@@ -28,3 +28,6 @@ Primer memorama con login guardado en base de datos swiftData.
 7.2- Cancelar: se regresa a la vista de instrucciones.
 
 <img width="120" height="260" alt="Simulator Screenshot - iPhone 17 Pro - 2025-11-11 at 18 36 55" src="https://github.com/user-attachments/assets/48529ab2-4a48-4e80-9cc6-d9e19f2e46df" />
+<img width="120" height="260" alt="Simulator Screenshot - iPhone 17 Pro - 2025-11-11 at 18 36 15" src="https://github.com/user-attachments/assets/7d51a0b6-fd29-46ef-a82f-e25062ba2793" />
+<img width="120" height="260" alt="Simulator Screenshot - iPhone 17 Pro - 2025-11-11 at 18 36 32" src="https://github.com/user-attachments/assets/ab6de350-8acf-4852-9ac5-f6e192b3d0b9" />
+<img width="120" height="260" alt="Simulator Screenshot - iPhone 17 Pro - 2025-11-11 at 18 36 44" src="https://github.com/user-attachments/assets/d8a5f173-8d06-4648-9209-46c554b61022" />
