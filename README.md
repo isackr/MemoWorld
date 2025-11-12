@@ -1,5 +1,7 @@
 First Memorama built with SwiftUI and login saved in the database with SwiftData.
-Unit tests created with XCTest
+Unit tests created with XCTest.
+XCode Version 26.0.1 (17A400)
+iOS 17.6 or later.
 
 1.- It shows you a splash screen with animation.
 2.- It asks for the user’s name to continue.
@@ -16,6 +18,8 @@ Unit tests created with XCTest
 
 Primer memorama cread con SwiftUI con login guardado en base de datos SwiftData.
 Pruebas unitarias creadas con XCTest.
+XCode Version 26.0.1 (17A400)
+iOS 17.6 o superior.
 
 1.- Se lanza un splash con animación.
 2.- Se solicita un nombre de usuario para continuar.
