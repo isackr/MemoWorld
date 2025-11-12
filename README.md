@@ -1,4 +1,4 @@
-First Memorama built with SwiftUI and login saved in the database with SwiftData
+First Memorama built with SwiftUI and login saved in the database with SwiftData.
 Unit tests created with XCTest
 
 1.- It shows you a splash screen with animation.
@@ -15,7 +15,7 @@ Unit tests created with XCTest
 7.2 Cancel: Go back to the instructions screen.
 
 Primer memorama cread con SwiftUI con login guardado en base de datos SwiftData.
-Pruebas unitarias creadas con XCTest
+Pruebas unitarias creadas con XCTest.
 
 1.- Se lanza un splash con animación.
 2.- Se solicita un nombre de usuario para continuar.
