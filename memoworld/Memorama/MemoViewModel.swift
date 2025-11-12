@@ -62,7 +62,9 @@ final class MemoViewModel: MemoViewModelProtocol {
         guard let timerCancellable = timerCancellable else { return }
         timerCancellable.cancel()
         SoundManager.shared.stopAll()
-        showAlertLose = true
+        if showAlertLose == false && validateWinner() == false {
+            showAlertLose = true
+        }
         print("🎯 Acción al finalizar el conteo2")
     }
     
@@ -143,6 +145,7 @@ final class MemoViewModel: MemoViewModelProtocol {
     }
     
     func validateWinner() -> Bool {
+        print("Si gano?: ",cardButtonsArray.allSatisfy(\.isRevealed))
         return cardButtonsArray.allSatisfy(\.isRevealed)
     }
     
@@ -154,6 +157,7 @@ final class MemoViewModel: MemoViewModelProtocol {
         imagesByMatchArray = []
         revealedIndices = []
         timerCancellable = nil
+        showAlertLose = false
     }
     
     func playSoundBackground() {

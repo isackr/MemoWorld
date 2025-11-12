@@ -91,6 +91,7 @@ struct MemoPlay: View {
                 loginViewModel.startAgain()
                 loginViewModel.startCountdown(timeSeconds: 60)
                 loginViewModel.playSoundBackground()
+                showAlertWin = false
             },
                             primaryLabel: { Text("Continue") },
                             secondaryAction: {
