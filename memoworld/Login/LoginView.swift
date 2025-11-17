@@ -11,8 +11,7 @@ import Combine
 
 struct LoginView: View {
     @Environment(\.modelContext) private var context
-    @StateObject private var loginViewModel = LoginViewModel()
-    @StateObject var memoViewModel = MemoViewModel()
+    @ObservedObject var loginViewModel: LoginViewModel
     @State var alias: String = ""
     @State private var path = NavigationPath()
     @State var showWelcomeMessage: Bool = true
@@ -44,8 +43,11 @@ struct LoginView: View {
                                     loginViewModel.cleanModels()
                                     let newUser = User(name: alias)
                                     if loginViewModel.saveUser(newUser) {
+                                        _ = loginViewModel.saveGame()
                                         showWelcomeMessage = false
                                         startCountdown()
+                                    } else {
+                                        print("no lo guardo")
                                     }
                                 }
                             }
@@ -60,8 +62,9 @@ struct LoginView: View {
                             (
                                 Text("MEMORAMA \nTe da la bienvenida👋 \n\n")
                                     .foregroundColor(.white)
-                                + Text("\(loginViewModel.getFirstUser(context)?.name ?? "RETADOR") \n\n")
+                                + Text("\(loginViewModel.getFirstUser()?.name ?? "RETADOR") \n\n")
                                     .foregroundColor(.blue)
+                                    .bold()
                                 + Text("¡Disfruta de la aventura! 🚀")
                                     .foregroundColor(.white)
                             )
@@ -77,8 +80,7 @@ struct LoginView: View {
             }
             .navigationDestination(for: String.self) { value in
                 if value == "goMemoView" {
-                    MemoMainView<MemoViewModel>(loginViewModel: MemoViewModel(),
-                                                path: $path)
+                    MemoModule.build()
                 }
             }
         }
@@ -107,6 +109,6 @@ struct LoginView: View {
 }
 
 #Preview {
-    LoginView()
+    LoginModule.build()
 }
 

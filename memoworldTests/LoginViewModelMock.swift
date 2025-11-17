@@ -9,12 +9,13 @@ import SwiftUI
 import Combine
 import SwiftData
 
-@MainActor
 final class LoginViewModelMock: LoginViewModelProtocol {
     var isAliasValidBool = false
     var saveUserBool = false
     var cleanModelsBool = false
     var context: ModelContext?
+    var saveGameBool = false
+    
     @ValidateAlias var validateAlias: String?
     @Published var user: User?
     
@@ -33,11 +34,16 @@ final class LoginViewModelMock: LoginViewModelProtocol {
         return saveUserBool
     }
     
-    func getFirstUser(_ context: ModelContext) -> User? {
+    func getFirstUser() -> User? {
         return User(name: "Enrique")
     }
     
     func cleanModels() {
         cleanModelsBool = true
+    }
+    
+    func saveGame() -> Bool {
+        saveGameBool = true
+        return saveGameBool
     }
 }

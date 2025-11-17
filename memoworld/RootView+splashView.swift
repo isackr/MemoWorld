@@ -16,7 +16,7 @@ struct RootView: View {
                 SplashView()
                     .transition(.opacity) // 👈 Fade out
             } else {
-                LoginView()
+                LoginModule.build()
                     .transition(.opacity)
             }
         }

@@ -9,17 +9,16 @@ import SwiftUI
 import SwiftData
 import Combine
 
-struct MemoMainView<ViewModel: MemoViewModelProtocol>: View {
-    @Environment(\.modelContext) private var context
-    @ObservedObject var loginViewModel: MemoViewModel
+struct MemoView: View {
+    @ObservedObject var memoViewModel: MemoViewModel
     @Binding var path: NavigationPath
     @State private var alias: String = ""
     @State private var showWelcomeMessage: Bool = true
     @State private var isMuted = false
     @State private var showSoundButton = false
     
-    init(loginViewModel: MemoViewModel, path: Binding<NavigationPath> = .constant(NavigationPath())) {
-        self.loginViewModel = loginViewModel
+    init(memoViewModel: MemoViewModel, path: Binding<NavigationPath> = .constant(NavigationPath())) {
+        self.memoViewModel = memoViewModel
         _path = path
     }
     
@@ -30,11 +29,11 @@ struct MemoMainView<ViewModel: MemoViewModelProtocol>: View {
                     .memoImageStyle()
                 
                 if showWelcomeMessage {
-                    MemoWelcome(loginViewModel: loginViewModel,
+                    MemoWelcome(memoViewModel: memoViewModel,
                                 showWelcomeMessage: $showWelcomeMessage,
                                 showSoundButton: $showSoundButton)
                 } else {
-                    MemoPlay(loginViewModel: loginViewModel,
+                    MemoPlay(memoViewModel: memoViewModel,
                              path: $path,
                              showWelcomeMessage: $showWelcomeMessage,
                              showSoundButton: $showSoundButton)
@@ -62,7 +61,7 @@ struct MemoMainView<ViewModel: MemoViewModelProtocol>: View {
                             if isMuted {
                                 SoundManager.shared.stopAll()
                             } else {
-                                loginViewModel.startSoundWaiting()
+                                memoViewModel.startSoundWaiting()
                             }
                         } label: {
                             Image(systemName: isMuted ? "speaker.slash" : "speaker.wave.2")
@@ -77,6 +76,7 @@ struct MemoMainView<ViewModel: MemoViewModelProtocol>: View {
 }
 
 #Preview {
-    MemoMainView<MemoViewModel>(loginViewModel: MemoViewModel())
+    let memoModel = MemoModel()
+    let mockViewModel = MemoViewModel(memoModel: memoModel)
+    MemoView(memoViewModel: mockViewModel)
 }
-

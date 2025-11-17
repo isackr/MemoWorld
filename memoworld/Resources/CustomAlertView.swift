@@ -5,21 +5,11 @@
 //  Created by Isaac Rosas Camarillo on 10/11/25.
 //
 
-/// CustomAlertView: A flexible, reusable SwiftUI alert component.
-/// Features:
-/// - Title, message, optional icon
-/// - One or two buttons with custom actions
-/// - Customizable styles (success, error, warning, plain)
-/// - Background dim + blur, tap-to-dismiss option
-/// - Subtle appear/disappear animation
-
 import SwiftUI
 import Combine
 
 public enum AlertStyle {
     case plain, success, warning, error
-    
-    
     var accentColor: Color {
         switch self {
         case .plain: return Color.primary
@@ -30,32 +20,20 @@ public enum AlertStyle {
     }
 }
 
-
-
 public struct CustomAlertView<PrimaryButtonLabel: View, SecondaryButtonLabel: View>: View {
     @Binding var isPresented: Bool
-    
-    
     let title: String
     let message: String?
     let icon: Image?
     let style: AlertStyle
-    
-    
     // Buttons
     let primaryAction: () -> Void
     let primaryLabel: () -> PrimaryButtonLabel
-    
-    
     let secondaryAction: (() -> Void)?
     let secondaryLabel: (() -> SecondaryButtonLabel)?
-    
-    
     // Options
     var allowTapToDismiss: Bool = true
     var blurBackground: Bool = true
-    
-    
     // Init with optional secondary button
     public init(isPresented: Binding<Bool>,
                 title: String,
@@ -68,7 +46,6 @@ public struct CustomAlertView<PrimaryButtonLabel: View, SecondaryButtonLabel: Vi
                 @ViewBuilder primaryLabel: @escaping () -> PrimaryButtonLabel,
                 secondaryAction: (() -> Void)? = nil,
                 @ViewBuilder secondaryLabel: @escaping () -> SecondaryButtonLabel) {
-//                @ViewBuilder secondaryLabel: (() -> SecondaryButtonLabel)? = nil) {
         self._isPresented = isPresented
         self.title = title
         self.message = message
@@ -98,13 +75,9 @@ public struct CustomAlertView<PrimaryButtonLabel: View, SecondaryButtonLabel: Vi
                                 .frame(width: 48, height: 48)
                                 .foregroundColor(style.accentColor)
                         }
-                        
-                        
                         Text(title)
                             .font(.headline)
                             .multilineTextAlignment(.center)
-                        
-                        
                         if let message = message {
                             Text(message)
                                 .font(.subheadline)
@@ -122,8 +95,6 @@ public struct CustomAlertView<PrimaryButtonLabel: View, SecondaryButtonLabel: Vi
                                 }
                                 .buttonStyle(.bordered)
                             }
-                            
-                            
                             Button(action: {
                                 withAnimation { isPresented = false }
                                 primaryAction()
@@ -155,31 +126,21 @@ public struct CustomAlertView<PrimaryButtonLabel: View, SecondaryButtonLabel: Vi
     }
 }
 
-
-
 // MARK: - VisualEffectBlur helper
 // This small wrapper provides a UIKit blur for SwiftUI (works on iOS/macCatalyst).
 struct VisualEffectBlur: UIViewRepresentable {
     var blurStyle: UIBlurEffect.Style
-    
-    
     func makeUIView(context: Context) -> UIVisualEffectView {
         let view = UIVisualEffectView(effect: UIBlurEffect(style: blurStyle))
         return view
     }
-    
-    
     func updateUIView(_ uiView: UIVisualEffectView, context: Context) {}
 }
-
-
 
 // MARK: - Example usage
 struct CustomAlertView_Previews: PreviewProvider {
     struct PreviewWrapper: View {
         @State private var show = true
-        
-        
         var body: some View {
             ZStack {
                 Color(.systemBackground).ignoresSafeArea()
@@ -200,8 +161,6 @@ struct CustomAlertView_Previews: PreviewProvider {
             }
         }
     }
-    
-    
     static var previews: some View {
         PreviewWrapper()
     }

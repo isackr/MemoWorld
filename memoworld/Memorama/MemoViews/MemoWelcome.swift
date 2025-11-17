@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MemoWelcome: View {
-    @ObservedObject var loginViewModel: MemoViewModel
+    @ObservedObject var memoViewModel: MemoViewModel
     @Binding var showWelcomeMessage: Bool
     @Binding var showSoundButton: Bool
     
@@ -16,14 +16,14 @@ struct MemoWelcome: View {
         VStack{
             VStack {
                 VStack{
-                    Text("Hey Niño \n Bad Kid te saluda!")
+                    Text("✨\(memoViewModel.getFirstUser()?.name ?? "")✨ \n Bad Kid te saluda!")
                         .memoTextStyle(for: .hey)
                     Text("Debes terminar antes de 60 segundos o perderas.")
                         .memoTextStyle(for: .instruction)
                     Button("Comenzar") {
                         showWelcomeMessage = false
                         showSoundButton = true
-                        loginViewModel.startSoundWaiting()
+                        memoViewModel.startSoundWaiting()
                     }
                     .memoTextStyle(for: .buttonStart)
                     Text("¡Suerte, si la encuentras.! 🚀")
@@ -42,10 +42,10 @@ struct MemoWelcome: View {
 
 #Preview {
     // MARK: - Mock data para el preview
-    let mockViewModel = MemoViewModel() 
-    
+    let memoModel = MemoModel()
+    let mockViewModel = MemoViewModel(memoModel: memoModel)
     MemoWelcome(
-        loginViewModel: mockViewModel,
+        memoViewModel: mockViewModel,
         showWelcomeMessage: .constant(true),
         showSoundButton: .constant(false)
     )

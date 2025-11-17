@@ -9,47 +9,60 @@ import SwiftUI
 import Combine
 
 struct MemoPlay: View {
-    @ObservedObject var loginViewModel: MemoViewModel
+    @Environment(\.modelContext) private var context
+    @ObservedObject var memoViewModel: MemoViewModel
+    
     @Binding var path: NavigationPath
     @Binding var showWelcomeMessage: Bool
     @Binding var showSoundButton: Bool
+    
     @State var beganToPlay: Bool = false
     @State var indexButtonSelectedOne: Int = 100
     @State var indexButtonSelectedTwo: Int = 100
-    let columns = Array(repeating: GridItem(.flexible(), spacing: 16), count: 3)
+    
     @State private var showAlertWin = false
-
+    
+    let columns = Array(repeating: GridItem(.flexible(), spacing: 16), count: 3)
+    
     var body: some View {
         VStack {
+            // MARK: Game Grid
             ZStack {
                 Color.black.opacity(0.3)
                     .cornerRadius(20)
+                
                 VStack {
                     LazyVGrid(columns: columns, spacing: 10) {
                         ForEach(0..<12) { index in
-                            let card = loginViewModel.cardButtonsArray[index]
-                           
+                            let card = memoViewModel.cardButtonsArray[index]
+                            
                             CardCircleView(card: card)
                                 .onTapGesture {
                                     withAnimation(.easeInOut(duration: 0.5)) {
-                                        loginViewModel.revealCard(at: index)
-                                        showAlertWin = loginViewModel.validateWinner()
+                                        memoViewModel.revealCard(at: index)
+                                        
+                                        // Validar si ganó
+                                        showAlertWin = memoViewModel.validateWinner()
+                                        
                                         if showAlertWin {
                                             SoundManager.shared.stopAll()
-                                            loginViewModel.stopCoutdown()
+                                            memoViewModel.stopCoutdown()
                                         }
                                     }
                                 }
                         }
                     }
                     .padding()
-                    Text("\(loginViewModel.counter)")
+                    
+                    Text("\(memoViewModel.counter)")
                         .memoTextStyle(for: .counter)
                 }
-                .disabled(loginViewModel.isInteractionDisabled)
+                .disabled(memoViewModel.isInteractionDisabled)
             }
             .memoTextStyle(for: .viewSecond)
             
+            
+            // MARK: Score Section
             VStack {
                 VStack {
                     HStack {
@@ -59,11 +72,11 @@ struct MemoPlay: View {
                         Text("🚀 Points: 0")
                             .memoTextStyle(for: .score)
                     }
+                    
                     HStack {
-                        Rectangle()
-                            .memoRectangleStyle()
-                        
+                        Rectangle().memoRectangleStyle()
                     }
+                    
                     HStack {
                         Text("💀 Losses: 0")
                             .memoTextStyle(for: .scoreBottom)
@@ -75,53 +88,62 @@ struct MemoPlay: View {
             .padding(.bottom, 40)
         }
         .onAppear {
-            loginViewModel.startCountdown(timeSeconds: 60)
-        }.onDisappear {
-            loginViewModel.stopCoutdown()
+            memoViewModel.startCountdown(timeSeconds: 60)
+            memoViewModel.updateContext(context)
+        }
+        .onDisappear {
+            memoViewModel.stopCoutdown()
             SoundManager.shared.stopAll()
         }
         
+        // MARK: - Alert de Ganador
         if showAlertWin {
-            CustomAlertView(isPresented: $showAlertWin,
-                            title: "Congratulations! \n You Are a Winner!",
-                            message: "Enjoy your new points.",
-                            icon: Image(systemName: "sparkles"),
-                            style: .warning,
-                            primaryAction: {
-                loginViewModel.startAgain()
-                loginViewModel.startCountdown(timeSeconds: 60)
-                loginViewModel.playSoundBackground()
-                showAlertWin = false
-            },
-                            primaryLabel: { Text("Continue") },
-                            secondaryAction: {
-                loginViewModel.startAgain()
-                showWelcomeMessage = true
-                showSoundButton = false
-            },
-                            secondaryLabel: { Text("Cancel")
-            })
+            CustomAlertView(
+                isPresented: $showAlertWin,
+                title: "\(memoViewModel.getFirstUser()?.name ?? "") \n\n Eres un Ganador! 🚀",
+                message: "💠 Disfruta tus nuevos puntos 💠",
+                icon: Image(systemName: "sparkles"),
+                style: .warning,
+                primaryAction: {
+                    memoViewModel.saveGamePlayed(isWinner: true)
+                    memoViewModel.startAgain()
+                    memoViewModel.startCountdown(timeSeconds: 60)
+                    memoViewModel.playSoundBackground()
+                    showAlertWin = false
+                },
+                primaryLabel: { Text("Continuar 🚀") },
+                secondaryAction: {
+                    memoViewModel.saveGamePlayed(isWinner: true)
+                    memoViewModel.startAgain()
+                    showWelcomeMessage = true
+                    showSoundButton = false
+                },
+                secondaryLabel: { Text("❌ Cancelar") }
+            )
         }
         
-        if loginViewModel.showAlertLose {
-            CustomAlertView(isPresented: $loginViewModel.showAlertLose,
-                            title: "I'm sorry! \n You have lost!",
-                            message: "Try again.",
-                            icon: Image(systemName: "sparkles"),
-                            style: .warning,
-                            primaryAction: {
-                loginViewModel.startAgain()
-                loginViewModel.startCountdown(timeSeconds: 60)
-                loginViewModel.playSoundBackground()
-            },
-                            primaryLabel: { Text("Continue") },
-                            secondaryAction: {
-                loginViewModel.startAgain()
-                showWelcomeMessage = true
-                showSoundButton = false
-            },
-                            secondaryLabel: { Text("Cancel")
-            })
+        // MARK: - Alert de Perdedor
+        if memoViewModel.showAlertLose {
+            CustomAlertView(
+                isPresented: $memoViewModel.showAlertLose,
+                title: "\(memoViewModel.getFirstUser()?.name ?? "")! \n\n Perdiste! 👎",
+                message: "💠 Lo siento! inténtalo de nuevo 💠",
+                icon: Image(systemName: "sparkles"),
+                style: .warning,
+                primaryAction: {
+                    memoViewModel.saveGamePlayed(isWinner: false)
+                    memoViewModel.startAgain()
+                    memoViewModel.startCountdown(timeSeconds: 60)
+                    memoViewModel.playSoundBackground()
+                },
+                primaryLabel: { Text("Continuar 🚀") },
+                secondaryAction: {
+                    memoViewModel.startAgain()
+                    showWelcomeMessage = true
+                    showSoundButton = false
+                },
+                secondaryLabel: { Text("❌ Cancelar") }
+            )
         }
     }
 }
@@ -129,8 +151,11 @@ struct MemoPlay: View {
 
 #Preview {
     // MARK: - Mock data para el preview
+    let memoModel = MemoModel()
+    let mockViewModel = MemoViewModel(memoModel: memoModel)
+    
     MemoPlay(
-        loginViewModel: MemoViewModel(),
+        memoViewModel: mockViewModel,
         path: .constant(NavigationPath()),
         showWelcomeMessage: .constant(false),
         showSoundButton: .constant(true)

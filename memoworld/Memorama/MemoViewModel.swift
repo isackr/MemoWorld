@@ -21,9 +21,11 @@ protocol MemoViewModelProtocol: ObservableObject {
     func validateWinner() -> Bool
     func playSoundBackground()
     func startAgain()
+    func getFirstUser() -> User?
+    func saveGamePlayed(isWinner: Bool)
+    func updateContext(_ context: ModelContext)
 }
 
-@MainActor
 final class MemoViewModel: MemoViewModelProtocol {
     @Published var counter: Int = 60
     @Published var cardButtonsArray: [CardCircle] = []
@@ -34,8 +36,10 @@ final class MemoViewModel: MemoViewModelProtocol {
     var revealedIndices: [Int] = []
     var timerCancellable: AnyCancellable?
     var hideTask: Task<Void, Never>?
+    private var memoModel: MemoModelProtocol?
     
-    init() {
+    init(memoModel: MemoModelProtocol) {
+        self.memoModel = memoModel
         getButtonsToMatch()
     }
     
@@ -43,6 +47,14 @@ final class MemoViewModel: MemoViewModelProtocol {
         SoundManager.shared.playSound(named: "esperandoBackgroundMedio",
                                       withExtension: "wav",
                                       loops: true)
+    }
+    
+    func getFirstUser() -> User? {
+        return memoModel?.getFirstUser()
+    }
+    
+    func saveGamePlayed(isWinner: Bool) {
+        memoModel?.saveGamePlayed(isWinner: isWinner)
     }
     
     func startCountdown(timeSeconds: Int) {
@@ -106,12 +118,13 @@ final class MemoViewModel: MemoViewModelProtocol {
     
     private func startHideTimer() {
         hideTask?.cancel()
-        
         hideTask = Task {
             do {
                 try await Task.sleep(for: .seconds(4))
                 guard !Task.isCancelled else { return }
-                hideUnmatchedCards()
+                _ = await MainActor.run {
+                    hideUnmatchedCards()
+                }
             } catch {
                 print("tarea cancelada")
             }
@@ -164,5 +177,9 @@ final class MemoViewModel: MemoViewModelProtocol {
         SoundManager.shared.playSound(named: "esperandoBackgroundMedio",
                                       withExtension: "wav",
                                       loops: true)
+    }
+    
+    func updateContext(_ context: ModelContext) {
+        memoModel?.updateContext(context)
     }
 }
